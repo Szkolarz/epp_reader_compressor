@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EPPController {
     @FXML
@@ -19,10 +21,38 @@ public class EPPController {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
 
+
+
         String st;
 
-        while ((st = br.readLine()) != null)
+
+        List<String> list = new ArrayList<String>();
+
+        while ((st = br.readLine()) != null) {
             System.out.println(st);
+            list.add(st);
+        }
+
+        for (int i=0; i<list.size(); i++)
+        {
+            String input = list.get(i);   //input string
+            String firstFourChars = "";   //substring containing first 4 characters
+
+            if (input.length() > 4)
+                firstFourChars = input.substring(0, 4);
+
+            if (firstFourChars.contains("KW"))
+            {
+                String temp = list.get(i);
+                System.out.println(temp.replaceAll("(,)\\1{1,}",","));
+            }
+        }
+
+
+
+
     }
 
     }
+
+
