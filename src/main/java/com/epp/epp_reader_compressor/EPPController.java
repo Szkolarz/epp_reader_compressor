@@ -1,6 +1,11 @@
 package com.epp.epp_reader_compressor;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 
 import java.io.*;
@@ -9,6 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.image.ImageView;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -20,30 +30,48 @@ public class EPPController {
     @FXML
     private Label welcomeText;
 
+    @FXML
+    private Label labelEPP;
+    @FXML
+    private Label labelXLSX;
+
+    @FXML
+    private Button buttonLoad;
+
+    @FXML
+    private ImageView imgTickXlsx;
+    @FXML
+    private ImageView imgTickEpp;
+
+    private Stage stage;
 
     List<String> list = new ArrayList<String>();
 
+    public void initialize() {
+
+
+        buttonLoad.setDisable(true);
+        imgTickXlsx.setVisible(false);
+        imgTickEpp.setVisible(false);
+
+    }
+
+
     @FXML
-    protected void onHelloButtonClick() throws IOException {
+    protected void onSaveButtonClick() throws IOException {
 
         welcomeText.setText("EPP Converter");
 
-        File file = new File(
-                "C:\\Users\\tholv\\Desktop\\epp\\przesyl7.22.epp");
-
+        File file = new File("C:\\Users\\tholv\\Desktop\\epp\\przesyl7.22.epp");
 
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-2"));
-
-
-
 
 
         ReadCellData(0, 1, "C:\\Users\\tholv\\Desktop\\epp\\import-firgang722.xlsx");
 
 
         String st;
-
 
         try {
             File myObj = new File("test.txt");
@@ -56,8 +84,6 @@ public class EPPController {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
-
 
 
 
@@ -114,6 +140,49 @@ System.out.println("finito");
     }
 
 
+    private void checkRequirements() {
+        if (!labelEPP.getText().equals("(nie wybrano)") && !labelXLSX.getText().equals("(nie wybrano)"))
+            buttonLoad.setDisable(false);
+        else
+            buttonLoad.setDisable(true);
+
+        if (!labelEPP.getText().equals("(nie wybrano)"))
+            imgTickEpp.setVisible(true);
+        else
+            imgTickEpp.setVisible(false);
+
+        if (!labelXLSX.getText().equals("(nie wybrano)"))
+            imgTickXlsx.setVisible(true);
+        else
+            imgTickXlsx.setVisible(false);
+
+
+    }
+
+
+    @FXML
+    protected void onEppButtonClick(ActionEvent event) throws IOException {
+        //Runtime.getRuntime().exec("explorer /select, C:\\");
+        FileLoad fileload = new FileLoad();
+        fileload.getTheUserFilePath(event, "epp", stage);
+        labelEPP.setText(fileload.getNameOfFile());
+        checkRequirements();
+    }
+
+    @FXML
+    protected void onXlsxButtonClick(ActionEvent event) throws IOException {
+        FileLoad fileload = new FileLoad();
+        fileload.getTheUserFilePath(event, "xlsx", stage);
+        labelXLSX.setText(fileload.getNameOfFile());
+        checkRequirements();
+    }
+
+
+
+
+
+
+
     List<String> listOfErrors = new ArrayList<String>();
 
     public void ReadCellData(int vColumn, int vColumn2, String file)
@@ -163,9 +232,6 @@ System.out.println("finito");
         {
             e1.printStackTrace();
         }
-
-
-
 
 
     }
