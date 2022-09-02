@@ -1,5 +1,6 @@
 package com.epp.epp_reader_compressor;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -43,45 +45,70 @@ public class EPPController {
     @FXML
     private ImageView imgTickEpp;
 
+    @FXML
+    private Rectangle clickMinimized1;
+    @FXML
+    private Label clickMinimized;
+    @FXML
+    private Label labelLoading;
+
     private Stage stage;
+
+    private String eppPath;
+    private String xlsxPath;
+
 
     List<String> list = new ArrayList<String>();
 
     public void initialize() {
 
-
         buttonLoad.setDisable(true);
         imgTickXlsx.setVisible(false);
         imgTickEpp.setVisible(false);
+        labelLoading.setVisible(false);
 
     }
 
+    @FXML
+    protected void onMouseExit() throws IOException {
+        Platform.exit();
+        System.exit(0);
+    }
+
+    @FXML
+    protected void onMouseMinimized() throws IOException {
+        Stage stage = (Stage) clickMinimized.getScene().getWindow();
+        stage.setIconified(true);
+    }
 
     @FXML
     protected void onSaveButtonClick() throws IOException {
 
+
+
         welcomeText.setText("EPP Converter");
 
-        File file = new File("C:\\Users\\tholv\\Desktop\\epp\\przesyl7.22.epp");
+        File file = new File(eppPath);
 
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-2"));
 
 
-        ReadCellData(0, 1, "C:\\Users\\tholv\\Desktop\\epp\\import-firgang722.xlsx");
+        ReadCellData(0, 1, xlsxPath);
 
 
         String st;
 
         try {
+            labelLoading.setVisible(true);
             File myObj = new File("test.txt");
             if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
+                System.out.println("Plik utworzony: " + myObj.getName());
             } else {
-                System.out.println("File already exists.");
+                System.out.println("Plik już istnieje");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("Błąd tworzenia pliku");
             e.printStackTrace();
         }
 
@@ -112,7 +139,10 @@ public class EPPController {
                     String temp = list.get(i);
                     temp = (temp.replaceAll("(,)\\1{1,}", "\t"));
                     temp = (temp.replaceAll("[ ]*,[ ]*+", "\t"));
-                    temp = (temp.replaceAll("[\"]", " "));
+                    temp = (temp.replaceAll("[\"]", ""));
+                    temp = (temp.replaceAll("\\s[.]\\s*\\.*", ""));
+                    temp = (temp.replaceAll("(\\t)\\1{1,}", "\t"));
+                    temp = (temp.replaceAll("(\\t\\s)\\1{1,}", ""));
                     //System.out.println(temp.replaceAll("[ ]*,[ ]*|[ ]+", "\t"));
                     bw.write(temp);
                     bw.newLine();
@@ -134,8 +164,8 @@ public class EPPController {
         }*/
 
 
-
-System.out.println("finito");
+        labelLoading.setVisible(false);
+        System.out.println("finito");
 
     }
 
@@ -167,6 +197,7 @@ System.out.println("finito");
         fileload.getTheUserFilePath(event, "epp", stage);
         labelEPP.setText(fileload.getNameOfFile());
         checkRequirements();
+        eppPath = fileload.getPathOfFile();
     }
 
     @FXML
@@ -175,6 +206,7 @@ System.out.println("finito");
         fileload.getTheUserFilePath(event, "xlsx", stage);
         labelXLSX.setText(fileload.getNameOfFile());
         checkRequirements();
+        xlsxPath = fileload.getPathOfFile();
     }
 
 

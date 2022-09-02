@@ -11,7 +11,17 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="480.0" style="-fx-background-color: #333333;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.epp.epp_reader_compressor.EPPController">
    <children>
-      <Line endX="604.6680297851562" endY="6.444671630859375" layoutX="-417.62335205078125" layoutY="284.0" startX="710.2680053710938" startY="6.444671630859375" stroke="#292929" strokeLineCap="ROUND" strokeWidth="52.0">
+      <Line endX="31.5" endY="213.99996948242188" layoutX="10.0" layoutY="144.0" startX="31.5" startY="-98.75534057617188" stroke="#292929" strokeWidth="2.0" AnchorPane.rightAnchor="1.0">
+         <effect>
+            <DropShadow height="5.0" radius="2.0" width="5.0" />
+         </effect>
+      </Line>
+      <Line endX="31.5" endY="213.99996948242188" layoutX="1.0" layoutY="146.0" startX="31.5" startY="-98.75534057617188" stroke="#292929" strokeWidth="2.0" AnchorPane.leftAnchor="1.0">
+         <effect>
+            <DropShadow height="5.0" radius="2.0" width="5.0" />
+         </effect>
+      </Line>
+      <Line endX="607.6680297851562" endY="6.444671630859375" layoutX="-417.62335205078125" layoutY="284.0" startX="706.8679809570312" startY="6.444671630859375" stroke="#292929" strokeLineCap="ROUND" strokeWidth="52.0">
          <effect>
             <DropShadow />
          </effect></Line>
@@ -29,9 +39,9 @@
             </DropShadow>
          </effect>
       </Button>
-      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="275.0" onAction="#onSaveButtonClick" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242; -fx-background-radius: 54; -fx-border-width: 45; -fx-border-radius: 54; -fx-region-border: 23;" text="Ładuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
+      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="270.0" onAction="#onSaveButtonClick" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242; -fx-background-radius: 54; -fx-border-width: 45; -fx-border-radius: 54; -fx-region-border: 23;" text="Ładuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
          <font>
-            <Font size="14.0" />
+            <Font size="18.0" />
          </font>
          <opaqueInsets>
             <Insets />
@@ -45,7 +55,10 @@
          </effect>
       </Button>
       <Label fx:id="welcomeText" layoutX="250.0" layoutY="332.0" prefHeight="18.0" prefWidth="127.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="102.8" />
-      <Line endX="215.20001220703125" endY="5.7220458984375E-6" layoutX="240.0" layoutY="22.0" startX="-219.99998474121094" startY="1.1444091796875E-5" stroke="#292929" strokeWidth="50.0" />
+      <Line endX="215.20001220703125" endY="5.7220458984375E-6" layoutX="240.0" layoutY="22.0" startX="-219.99998474121094" startY="1.1444091796875E-5" stroke="#292929" strokeWidth="50.0">
+         <effect>
+            <DropShadow />
+         </effect></Line>
       <Label layoutX="278.0" layoutY="89.0" text="Wybrany plik:" textFill="WHITE" AnchorPane.leftAnchor="278.0" />
       <Label fx:id="labelEPP" layoutX="275.0" layoutY="112.0" prefHeight="18.0" prefWidth="203.0" text="(nie wybrano)" textFill="WHITE" underline="true" AnchorPane.leftAnchor="275.0" />
       <Button fx:id="buttonXlsx" contentDisplay="CENTER" layoutX="124.0" layoutY="186.0" mnemonicParsing="false" onAction="#onXlsxButtonClick" style="-fx-background-color: #6b6b6b; -fx-background-radius: 8;" text="Otwórz plik XLSX" textAlignment="CENTER" textFill="WHITE">
@@ -87,5 +100,23 @@
             <Image url="@../../../images/tick.png" />
          </image>
       </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#811212" height="21.0" layoutX="443.0" layoutY="1.0" onMouseClicked="#onMouseExit" stroke="#4b0000" strokeType="INSIDE" width="36.0" />
+      <Label layoutX="457.0" layoutY="2.0" onMouseClicked="#onMouseExit" text="X" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Rectangle fx:id="clickMinimized1" arcHeight="5.0" arcWidth="5.0" fill="#202020" height="21.0" layoutX="407.0" layoutY="1.0" onMouseClicked="#onMouseMinimized" stroke="#1b1b1b" strokeType="INSIDE" width="36.0" />
+      <Label fx:id="clickMinimized" layoutX="420.0" layoutY="-12.0" onMouseClicked="#onMouseMinimized" text="_" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="23.0" />
+         </font>
+      </Label>
+      <Line endX="-8.0" endY="191.24465942382812" layoutX="11.0" layoutY="156.0" startX="465.5999755859375" startY="191.24465942382812" stroke="#292929" strokeWidth="2.0" AnchorPane.bottomAnchor="1.0">
+         <effect>
+            <DropShadow height="5.0" radius="2.0" width="5.0" />
+         </effect>
+      </Line>
+      <Label fx:id="labelLoading" layoutX="332.0" layoutY="290.0" text="Ładowanie..." textFill="WHITE" />
    </children>
 </AnchorPane>

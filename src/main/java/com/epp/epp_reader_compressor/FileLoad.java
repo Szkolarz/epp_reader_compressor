@@ -19,9 +19,13 @@ public class FileLoad {
     private Label labelXLSX;
 
     private static String nameOfFile;
+    private static String pathOfFile;
 
     public String getNameOfFile() {
         return nameOfFile;
+    }
+    public String getPathOfFile() {
+        return pathOfFile;
     }
 
 
@@ -48,6 +52,7 @@ public class FileLoad {
         if (file != null) {
             //System.out.println((file.getPath()));
             nameOfFile = file.getPath();
+            pathOfFile = file.getPath();
             System.out.println(nameOfFile);
             //nameOfFile = nameOfFile.replaceAll(".+(\\.+)$", "a");
 
