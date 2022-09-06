@@ -44,70 +44,88 @@ public class EPP extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-
-        Parent root = FXMLLoader.load(getClass().getResource("epp-view.fxml"));
-        Scene scene = new Scene(root);
-        //FXMLLoader fxmlLoader = new FXMLLoader(EPP.class.getResource("epp-view.fxml"));
-
-        root.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
-
-        root.setOnMouseDragged(event -> {
-            stage.setX(event.getScreenX()-xOffset);
-            stage.setY(event.getScreenY()-yOffset);
-        });
-
-        Image icon = new Image(getClass().getResourceAsStream("/images/epp.png"));
-        stage.getIcons().add(icon);
-
-
-        //remove window decoration
-        stage.initStyle(StageStyle.UNDECORATED);
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setStyle("-fx-background-color: green;");
-        borderPane.setPrefSize(900, 500);
-        borderPane.setMaxSize(900, 500);
-
-
-        ToolBar toolBar = new ToolBar();
-
-        int height = 25;
-        toolBar.setPrefHeight(height);
-        toolBar.setMinHeight(height);
-        toolBar.setMaxHeight(height);
-        toolBar.getItems().add(new EPP.WindowButtons());
-
-        borderPane.setTop(toolBar);
-
-
-
-        borderPane.setOnMousePressed(new EventHandler<MouseEvent>() {
+        Platform.runLater(new Runnable() {
             @Override
-            public void handle(MouseEvent event) {
-                xOffset = stage.getX() - event.getScreenX();
-                yOffset = stage.getY() - event.getScreenY();
+            public void run() {
+
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("epp-view.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Scene scene = new Scene(root);
+                //FXMLLoader fxmlLoader = new FXMLLoader(EPP.class.getResource("epp-view.fxml"));
+
+                root.setOnMousePressed(event -> {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                });
+
+                root.setOnMouseDragged(event -> {
+                    stage.setX(event.getScreenX()-xOffset);
+                    stage.setY(event.getScreenY()-yOffset);
+                });
+
+                Image icon = new Image(getClass().getResourceAsStream("/images/epp.png"));
+                stage.getIcons().add(icon);
+
+
+                //remove window decoration
+                stage.initStyle(StageStyle.UNDECORATED);
+
+                BorderPane borderPane = new BorderPane();
+                borderPane.setStyle("-fx-background-color: green;");
+                borderPane.setPrefSize(900, 500);
+                borderPane.setMaxSize(900, 500);
+
+
+                ToolBar toolBar = new ToolBar();
+
+                int height = 25;
+                toolBar.setPrefHeight(height);
+                toolBar.setMinHeight(height);
+                toolBar.setMaxHeight(height);
+                toolBar.getItems().add(new EPP.WindowButtons());
+
+                borderPane.setTop(toolBar);
+
+
+
+                borderPane.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        xOffset = stage.getX() - event.getScreenX();
+                        yOffset = stage.getY() - event.getScreenY();
+                    }
+                });
+
+                borderPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        stage.setX(event.getScreenX() + xOffset);
+                        stage.setY(event.getScreenY() + yOffset);
+                    }
+                });
+
+
+                stage.setTitle("Konwerter plików EPP");
+                stage.setScene(scene);
+                stage.show();
+                stage.setResizable(false);
+
             }
         });
 
-        borderPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                stage.setX(event.getScreenX() + xOffset);
-                stage.setY(event.getScreenY() + yOffset);
-            }
-        });
 
 
-        stage.setTitle("Konwerter plików EPP");
-        stage.setScene(scene);
-        stage.show();
-        stage.setResizable(false);
+
     }
 
     public static void main(String[] args) {
+        Thread thread = new Thread(() -> {
         launch();
+        });
+        thread.start();
     }
 }

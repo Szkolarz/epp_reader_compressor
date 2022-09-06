@@ -39,7 +39,7 @@
             </DropShadow>
          </effect>
       </Button>
-      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="270.0" onAction="#onSaveButtonClick" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242; -fx-background-radius: 54; -fx-border-width: 45; -fx-border-radius: 54; -fx-region-border: 23;" text="Ładuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
+      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="270.0" onAction="#onSaveButtonClick1" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242; -fx-background-radius: 54; -fx-border-width: 45; -fx-border-radius: 54; -fx-region-border: 23;" text="Ładuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
          <font>
             <Font size="18.0" />
          </font>

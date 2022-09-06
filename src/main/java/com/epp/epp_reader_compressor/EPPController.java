@@ -27,8 +27,68 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.nio.charset.StandardCharsets;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
-public class EPPController {
+public class EPPController extends Thread {
+
+
+
+    public static Integer i;
+    public static Integer size;
+    public static BufferedWriter bw;
+
+    public EPPController() {
+
+    }
+
+    public void aaa() {
+
+    }
+
+    public static Integer getI() {
+        return i;
+    }
+
+    public void setI(Integer i) {
+        this.i = i;
+    }
+
+    public static Integer getSize() {
+        return size;
+    }
+
+    public void setSIze(Integer size) {
+        this.size = size;
+    }
+
+    public static BufferedWriter getBw() {
+        return bw;
+    }
+
+    public void setBw(BufferedWriter bw) {
+        this.bw = bw;
+    }
+
+    public EPPController(Integer i, Integer size, BufferedWriter bw) {
+        this.i = i;
+        this.size = size;  this.bw = bw;
+    }
+
+    public EPPController(BufferedWriter bw) {
+        this.bw = bw;
+    }
+
+
+
+
     @FXML
     private Label welcomeText;
 
@@ -58,7 +118,7 @@ public class EPPController {
     private String xlsxPath;
 
 
-    List<String> list = new ArrayList<String>();
+    private static List<String> list = new ArrayList<String>();
 
     public void initialize() {
 
@@ -81,23 +141,117 @@ public class EPPController {
         stage.setIconified(true);
     }
 
+
+
+
+    AtomicInteger atomicInteger = new AtomicInteger(0);
+
+    public void doSomething (final Integer i_, final Integer size_, final BufferedWriter bw) throws InterruptedException {
+        Thread thread = new Thread(() -> {
+
+            //System.out.println("I: " + i_);
+
+
+            for (int i = i_; i < size_; i++) { atomicInteger.incrementAndGet();  System.out.println(atomicInteger);
+                for (int j = 0; j < listOfErrors.size(); j++) {
+
+                    //System.out.println("I: "+i);
+                    //System.out.println("J: "+j +"\n");
+
+                    // System.out.println(list.get(i));
+
+                    //if (list.get(i).contains(listOfErrors.get(j))) {
+                    if ((list.get(i).contains(listOfErrors.get(j))) && ((listOfErrors.get(j)).substring(0, 2).equals(list.get(i).substring(1, 3)))
+                            || list.get(i).contains(listOfErrors.get(j)) && ((list.get(i)).startsWith("\"wpłata\""))
+                            || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"wypłata\"")
+                            || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"BP\"")
+                            || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"BW\"")) {
+
+                        //System.out.println("d");
+
+
+                        String temp = list.get(i);
+                        temp = (temp.replaceAll("(,)\\1{1,}", "\t"));
+                        temp = (temp.replaceAll("[ ]*,[ ]*+", "\t"));
+                        temp = (temp.replaceAll("[\"]", ""));               //apostrofy
+                        temp = (temp.replaceAll("\\s[.]\\s*\\.*", "\t"));   //kropki
+                        temp = (temp.replaceAll("(\\t)\\1{1,}", "\t"));
+                        temp = (temp.replaceAll("(\\t\\s)\\1{1,}", ""));
+                        //System.out.println(temp.replaceAll("[ ]*,[ ]*|[ ]+", "\t"));
+//   (\s[.](.*?)\t)
+                        //(\s[.]*)([\s]*\.)
+
+                        String firstTwoChars = "";   //substring containing first 4 characters
+
+                        firstTwoChars = temp.substring(0, 2);
+
+
+                        FileTypes fileTypes = new FileTypes();
+                        if (firstTwoChars.equals("BP")) {
+
+                            temp = fileTypes.fileBP(temp, firstTwoChars, listOfErrors.get(j));
+                        }
+                        if (firstTwoChars.equals("KW")) {
+                            temp = fileTypes.fileKW(temp, firstTwoChars, listOfErrors.get(j));
+                        }
+
+                        try {
+                            bw.write(temp);
+                            bw.newLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        //if (tester == list.size())
+                           // System.out.println("fdsfdsfdsfdsdsf");
+
+                        //System.out.println(total);
+
+
+                        break;
+                    }
+                }
+
+            }
+            try {
+                Thread.sleep(155);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+
+      /*  try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+
+
+
+    }
+
+    Integer flaga = 0;
+
     @FXML
-    protected void onSaveButtonClick() throws IOException {
-
-
+    public void onSaveButtonClick1() throws IOException, InterruptedException {
 
         welcomeText.setText("EPP Converter");
 
         File file = new File(eppPath);
 
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-2"));
+        BufferedReader br = null;
+        br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-2"));
 
 
         ReadCellData(0, 1, xlsxPath);
 
-
-        String st;
+        String st = "";
 
         try {
             labelLoading.setVisible(true);
@@ -115,44 +269,93 @@ public class EPPController {
 
 
 
-        while ((st = br.readLine()) != null) {
+        while (true) {
+
+            if (!((st = br.readLine()) != null)) break;
             //System.out.println(st);
             list.add(st);
         }
         //System.out.println(list.get(1));
 
 
-        FileWriter fw = new FileWriter("C:\\Users\\tholv\\Desktop\\epp\\test.txt", true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        for (int i=0; i<list.size(); i++)
-        {
-            //String input = list.get(i);   //input string
-            //String firstFourChars = "";   //substring containing first 4 characters
-
-            /*if (input.length() > 4)
-                firstFourChars = input.substring(0, 4);*/
-
-            /*if (firstFourChars.contains("KW"))*/
-
-            for (int j=0; j<listOfErrors.size(); j++) {
-                if (list.get(i).contains(listOfErrors.get(j))) {
-                    String temp = list.get(i);
-                    temp = (temp.replaceAll("(,)\\1{1,}", "\t"));
-                    temp = (temp.replaceAll("[ ]*,[ ]*+", "\t"));
-                    temp = (temp.replaceAll("[\"]", ""));
-                    temp = (temp.replaceAll("\\s[.]\\s*\\.*", ""));
-                    temp = (temp.replaceAll("(\\t)\\1{1,}", "\t"));
-                    temp = (temp.replaceAll("(\\t\\s)\\1{1,}", ""));
-                    //System.out.println(temp.replaceAll("[ ]*,[ ]*|[ ]+", "\t"));
-                    bw.write(temp);
-                    bw.newLine();
-
-
-                    break;
-                }
-            }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("C:\\Users\\tholv\\Desktop\\epp\\test.txt", true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        bw.close();
+        BufferedWriter bw = new BufferedWriter(fw);
+
+
+
+        EPPController epp = new EPPController();
+
+        Integer x = list.size() / 10000;
+        Integer y = list.size() % 10000;
+
+        Integer count = 0;
+
+
+        for (int k=0; k <= x; k++) {
+            if (k == (x)) {
+                epp.setI(list.size() - y);
+                final Integer q = getI();
+                count = k;
+               // System.out.println((list.size()) + " l size");
+
+
+
+               // System.out.println((list.size() - y) + "df");
+                //System.out.println((k) +" k");
+System.out.println("kkkkkk");
+                doSomething((list.size() - y), list.size(), bw);
+                //Runnable r = new EPPController(q, list.size(), bw);
+                //new Thread(r).start();
+                /*try {
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/x++; k++;
+            }
+            else {
+                epp.setI(k * 10000);
+                epp.setSIze((k+1)*10000);
+                final Integer q = getI();
+                final Integer w = getSize();
+                System.out.println((k) +" k");
+               // System.out.println((k * 10000) +" i");
+                //System.out.println(((k+1)*10000) +" size");
+
+                System.out.println(k * 10000 + " df");
+                System.out.println((k+1)*10000 + " ddf");
+
+                doSomething((k * 10000), ((k+1)*10000), bw);
+                sleep(5);
+                //Runnable r = new EPPController(q, w, bw);
+                //new Thread(r).start();
+            }
+
+        }
+
+
+
+
+
+
+
+        labelLoading.setVisible(false);
+        System.out.println("finito");
+
+
+
+
+
+
+    }
+
+
+    protected void onSaveButtonClick(Integer i) throws IOException  {
+
 
        /* Path source = Paths.get("C:\\Users\\tholv\\Desktop\\epp\\test.txt");
         try{
@@ -164,8 +367,7 @@ public class EPPController {
         }*/
 
 
-        labelLoading.setVisible(false);
-        System.out.println("finito");
+
 
     }
 
@@ -211,11 +413,11 @@ public class EPPController {
 
 
 
+//"(?:[^\\"](?=[\p{P}]{2,})|\\\\|\\")*"  //for later use (probably lmao)
 
 
 
-
-    List<String> listOfErrors = new ArrayList<String>();
+    private static List<String> listOfErrors = new ArrayList<String>();
 
     public void ReadCellData(int vColumn, int vColumn2, String file)
     {
@@ -270,6 +472,6 @@ public class EPPController {
 
 
 
-    }
+}
 
 
