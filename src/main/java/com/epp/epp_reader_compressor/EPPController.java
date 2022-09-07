@@ -151,8 +151,8 @@ public class EPPController extends Thread {
 
             //System.out.println("I: " + i_);
 
-
-            for (int i = i_; i < size_; i++) { atomicInteger.incrementAndGet();  System.out.println(atomicInteger);
+            for (int i = i_; i < size_; i++) {
+                atomicInteger.incrementAndGet();
                 for (int j = 0; j < listOfErrors.size(); j++) {
 
                     //System.out.println("I: "+i);
@@ -188,11 +188,13 @@ public class EPPController extends Thread {
 
                         FileTypes fileTypes = new FileTypes();
                         if (firstTwoChars.equals("BP")) {
-
                             temp = fileTypes.fileBP(temp, firstTwoChars, listOfErrors.get(j));
                         }
                         if (firstTwoChars.equals("KW")) {
                             temp = fileTypes.fileKW(temp, firstTwoChars, listOfErrors.get(j));
+                        }
+                        if (firstTwoChars.equals("BW")) {
+                            temp = fileTypes.fileBW(temp, firstTwoChars, listOfErrors.get(j));
                         }
 
                         try {
@@ -204,8 +206,8 @@ public class EPPController extends Thread {
 
 
 
-                        //if (tester == list.size())
-                           // System.out.println("fdsfdsfdsfdsdsf");
+
+
 
                         //System.out.println(total);
 
@@ -216,9 +218,24 @@ public class EPPController extends Thread {
 
             }
             try {
-                Thread.sleep(155);
+                Thread.sleep(15);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+
+            if (Integer.valueOf(String.valueOf(atomicInteger)) == list.size()) {
+                try {
+                    Thread.sleep(3000);
+                    bw.close();
+                    labelLoading.setVisible(false);
+                    System.out.println("finito");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
@@ -230,15 +247,11 @@ public class EPPController extends Thread {
             e.printStackTrace();
         }*/
 
-
-
-
     }
 
     Integer flaga = 0;
 
-    @FXML
-    public void onSaveButtonClick1() throws IOException, InterruptedException {
+    public void onSaveButtonClick() throws IOException, InterruptedException {
 
         welcomeText.setText("EPP Converter");
 
@@ -254,7 +267,6 @@ public class EPPController extends Thread {
         String st = "";
 
         try {
-            labelLoading.setVisible(true);
             File myObj = new File("test.txt");
             if (myObj.createNewFile()) {
                 System.out.println("Plik utworzony: " + myObj.getName());
@@ -287,64 +299,34 @@ public class EPPController extends Thread {
         BufferedWriter bw = new BufferedWriter(fw);
 
 
-
-        EPPController epp = new EPPController();
-
         Integer x = list.size() / 10000;
         Integer y = list.size() % 10000;
 
-        Integer count = 0;
 
 
         for (int k=0; k <= x; k++) {
             if (k == (x)) {
-                epp.setI(list.size() - y);
-                final Integer q = getI();
-                count = k;
-               // System.out.println((list.size()) + " l size");
-
-
-
-               // System.out.println((list.size() - y) + "df");
-                //System.out.println((k) +" k");
-System.out.println("kkkkkk");
                 doSomething((list.size() - y), list.size(), bw);
-                //Runnable r = new EPPController(q, list.size(), bw);
-                //new Thread(r).start();
-                /*try {
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/x++; k++;
+                x++; k++;
             }
             else {
-                epp.setI(k * 10000);
-                epp.setSIze((k+1)*10000);
-                final Integer q = getI();
-                final Integer w = getSize();
-                System.out.println((k) +" k");
-               // System.out.println((k * 10000) +" i");
-                //System.out.println(((k+1)*10000) +" size");
-
-                System.out.println(k * 10000 + " df");
-                System.out.println((k+1)*10000 + " ddf");
-
                 doSomething((k * 10000), ((k+1)*10000), bw);
-                sleep(5);
-                //Runnable r = new EPPController(q, w, bw);
-                //new Thread(r).start();
+                sleep(125);
             }
 
         }
 
+    }
+
+    @FXML
+    public void onSaveButtonClick1() throws IOException, InterruptedException {
+        labelLoading.setVisible(true);
+        sleep(10);
+        onSaveButtonClick();
 
 
 
 
-
-
-        labelLoading.setVisible(false);
-        System.out.println("finito");
 
 
 
