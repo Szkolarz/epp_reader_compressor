@@ -3,42 +3,30 @@ package com.epp.epp_reader_compressor;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.nio.charset.StandardCharsets;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 public class EPPController extends Thread {
-
 
 
     public static Integer i;
@@ -48,44 +36,6 @@ public class EPPController extends Thread {
     public EPPController() {
 
     }
-
-    public void aaa() {
-
-    }
-
-    public static Integer getI() {
-        return i;
-    }
-
-    public void setI(Integer i) {
-        this.i = i;
-    }
-
-    public static Integer getSize() {
-        return size;
-    }
-
-    public void setSIze(Integer size) {
-        this.size = size;
-    }
-
-    public static BufferedWriter getBw() {
-        return bw;
-    }
-
-    public void setBw(BufferedWriter bw) {
-        this.bw = bw;
-    }
-
-    public EPPController(Integer i, Integer size, BufferedWriter bw) {
-        this.i = i;
-        this.size = size;  this.bw = bw;
-    }
-
-    public EPPController(BufferedWriter bw) {
-        this.bw = bw;
-    }
-
 
 
 
@@ -99,11 +49,17 @@ public class EPPController extends Thread {
 
     @FXML
     private Button buttonLoad;
+    @FXML
+    private Button buttonEpp;
+    @FXML
+    private Button buttonXlsx;
 
     @FXML
     private ImageView imgTickXlsx;
     @FXML
     private ImageView imgTickEpp;
+    @FXML
+    private ImageView imageLoading;
 
     @FXML
     private Rectangle clickMinimized1;
@@ -116,18 +72,21 @@ public class EPPController extends Thread {
 
     private String eppPath;
     private String xlsxPath;
+    private String savedFilePath;
 
 
     private static List<String> list = new ArrayList<String>();
 
     public void initialize() {
-
         buttonLoad.setDisable(true);
         imgTickXlsx.setVisible(false);
         imgTickEpp.setVisible(false);
+        imageLoading.setVisible(false);
         labelLoading.setVisible(false);
-
+        setLoadingButtonColor("#171717");
     }
+
+
 
     @FXML
     protected void onMouseExit() throws IOException {
@@ -135,21 +94,20 @@ public class EPPController extends Thread {
         System.exit(0);
     }
 
+
+
     @FXML
     protected void onMouseMinimized() throws IOException {
         Stage stage = (Stage) clickMinimized.getScene().getWindow();
         stage.setIconified(true);
     }
 
-
-
+    //Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
     AtomicInteger atomicInteger = new AtomicInteger(0);
 
-    public void doSomething (final Integer i_, final Integer size_, final BufferedWriter bw) throws InterruptedException {
+    public void mainActivity (final Integer i_, final Integer size_, final BufferedWriter bw) throws InterruptedException {
         Thread thread = new Thread(() -> {
-
-            //System.out.println("I: " + i_);
 
             for (int i = i_; i < size_; i++) {
                 atomicInteger.incrementAndGet();
@@ -157,17 +115,13 @@ public class EPPController extends Thread {
 
                     //System.out.println("I: "+i);
                     //System.out.println("J: "+j +"\n");
-
                     // System.out.println(list.get(i));
 
-                    //if (list.get(i).contains(listOfErrors.get(j))) {
                     if ((list.get(i).contains(listOfErrors.get(j))) && ((listOfErrors.get(j)).substring(0, 2).equals(list.get(i).substring(1, 3)))
                             || list.get(i).contains(listOfErrors.get(j)) && ((list.get(i)).startsWith("\"wpłata\""))
                             || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"wypłata\"")
                             || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"BP\"")
                             || list.get(i).contains(listOfErrors.get(j)) && (list.get(i)).startsWith("\"BW\"")) {
-
-                        //System.out.println("d");
 
 
                         String temp = list.get(i);
@@ -190,11 +144,17 @@ public class EPPController extends Thread {
                         if (firstTwoChars.equals("BP")) {
                             temp = fileTypes.fileBP(temp, firstTwoChars, listOfErrors.get(j));
                         }
-                        if (firstTwoChars.equals("KW")) {
+                        else if (firstTwoChars.equals("KW")) {
                             temp = fileTypes.fileKW(temp, firstTwoChars, listOfErrors.get(j));
                         }
-                        if (firstTwoChars.equals("BW")) {
+                        else if (firstTwoChars.equals("BW")) {
                             temp = fileTypes.fileBW(temp, firstTwoChars, listOfErrors.get(j));
+                        }
+                        else if (firstTwoChars.equals("FS")) {
+                            temp = fileTypes.fileFS(temp, firstTwoChars, listOfErrors.get(j));
+                        }
+                        else {
+                            temp = fileTypes.fileOther(temp, firstTwoChars, listOfErrors.get(j));
                         }
 
                         try {
@@ -203,14 +163,6 @@ public class EPPController extends Thread {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-
-
-
-
-
-                        //System.out.println(total);
-
 
                         break;
                     }
@@ -228,12 +180,22 @@ public class EPPController extends Thread {
                     Thread.sleep(3000);
                     bw.close();
                     labelLoading.setVisible(false);
+                    imageLoading.setVisible(false);
+
+
+                    checkRequirements();
                     System.out.println("finito");
+
+                    buttonXlsx.setDisable(false);
+                    buttonEpp.setDisable(false);
+
+                    programComplete();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
 
 
             }
@@ -249,89 +211,139 @@ public class EPPController extends Thread {
 
     }
 
-    Integer flaga = 0;
+    public void programComplete() throws IOException, InterruptedException {
+
+        try {
+            Platform.runLater(new Runnable() {
+                @Override public void run() {
+
+                    labelXLSX.setText("(nie wybrano)");
+                    labelEPP.setText("(nie wybrano)");
+                    checkRequirements();
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Konwersja danych");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Pomyślnie wykonano konwersję z .epp do .txt\n\n" +
+                            "Teraz można przenieść dane z pliku .txt do Excela");
+                    stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image("file:src/main/resources/images/epp.png"));
+                    alert.showAndWait();
+
+                }});
+        }  catch (Exception e) {
+
+        }start();
+
+
+
+    }
+
+
+    @FXML
+    private Button on1;
+
+    private void saveTextFile(String content, File file) {
+        try {
+            PrintWriter writer;
+            writer = new PrintWriter(file);
+            writer.println(content);
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(EPPController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
+
 
     public void onSaveButtonClick() throws IOException, InterruptedException {
+
+        final String columns = "Dokument\tKontrahent\tTreść dokumentu\tKwota";
+
+        //fileChooser.showOpenDialog(new Stage());
+
+        labelLoading.setVisible(true);
+        imageLoading.setVisible(true);
+
+        FileChooser fileChooser = new FileChooser();
+        String homePath = System.getProperty("user.home");
+        String currentPath = Paths.get(homePath).toAbsolutePath().normalize().toString();
+        fileChooser.setInitialDirectory(new File(currentPath));
+
+        //Set extension filter for text files
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Pliki TXT (*.txt)", "*.txt");
+        fileChooser.getInitialDirectory();
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File file1 = fileChooser.showSaveDialog(stage);
+
+
+        if (file1 != null) {
+            savedFilePath = file1.getPath();
+            System.out.println(savedFilePath);
+            saveTextFile(columns, file1);
+            setLoadingButtonColor("#171717");
+            buttonLoad.setDisable(true);
+            buttonXlsx.setDisable(true);
+            buttonEpp.setDisable(true);
+        }
+        else {
+            labelLoading.setVisible(false);
+            imageLoading.setVisible(false);
+        }
+
 
         welcomeText.setText("EPP Converter");
 
         File file = new File(eppPath);
 
-
         BufferedReader br = null;
         br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-2"));
-
 
         ReadCellData(0, 1, xlsxPath);
 
         String st = "";
 
-        try {
-            File myObj = new File("test.txt");
-            if (myObj.createNewFile()) {
-                System.out.println("Plik utworzony: " + myObj.getName());
-            } else {
-                System.out.println("Plik już istnieje");
-            }
-        } catch (IOException e) {
-            System.out.println("Błąd tworzenia pliku");
-            e.printStackTrace();
-        }
-
-
-
 
         while (true) {
-
             if (!((st = br.readLine()) != null)) break;
-            //System.out.println(st);
             list.add(st);
         }
-        //System.out.println(list.get(1));
 
 
         FileWriter fw = null;
-        try {
-            fw = new FileWriter("C:\\Users\\tholv\\Desktop\\epp\\test.txt", true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
-
-
-        Integer x = list.size() / 10000;
-        Integer y = list.size() % 10000;
-
-
-
-        for (int k=0; k <= x; k++) {
-            if (k == (x)) {
-                doSomething((list.size() - y), list.size(), bw);
-                x++; k++;
+        if (file1 != null) {
+            try {
+                fw = new FileWriter(savedFilePath, true);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            else {
-                doSomething((k * 10000), ((k+1)*10000), bw);
-                sleep(125);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+
+            Integer x = list.size() / 10000;
+            Integer y = list.size() % 10000;
+
+
+            for (int k = 0; k <= x; k++) {
+                if (k == (x)) {
+                    mainActivity((list.size() - y), list.size(), bw);
+                    x++;
+                    k++;
+                } else {
+                    mainActivity((k * 10000), ((k + 1) * 10000), bw);
+                    sleep(150); //to be sure that threads did their job
+                }
+
             }
-
         }
-
     }
 
     @FXML
     public void onSaveButtonClick1() throws IOException, InterruptedException {
-        labelLoading.setVisible(true);
         sleep(10);
         onSaveButtonClick();
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -355,10 +367,15 @@ public class EPPController extends Thread {
 
 
     private void checkRequirements() {
-        if (!labelEPP.getText().equals("(nie wybrano)") && !labelXLSX.getText().equals("(nie wybrano)"))
+        if (!labelEPP.getText().equals("(nie wybrano)") && !labelXLSX.getText().equals("(nie wybrano)")) {
             buttonLoad.setDisable(false);
-        else
+
+            setLoadingButtonColor("#52804d");
+        }
+        else {
             buttonLoad.setDisable(true);
+            setLoadingButtonColor("#171717");
+        }
 
         if (!labelEPP.getText().equals("(nie wybrano)"))
             imgTickEpp.setVisible(true);
@@ -384,10 +401,14 @@ public class EPPController extends Thread {
         eppPath = fileload.getPathOfFile();
     }
 
+    public void setLoadingButtonColor(String bgC) {
+        buttonLoad.setStyle("-fx-background-color: " + bgC + ";");
+    }
+
     @FXML
     protected void onXlsxButtonClick(ActionEvent event) throws IOException {
         FileLoad fileload = new FileLoad();
-        fileload.getTheUserFilePath(event, "xlsx", stage);
+        fileload.getTheUserFilePath(event, "*xlsx; *xls", stage);
         labelXLSX.setText(fileload.getNameOfFile());
         checkRequirements();
         xlsxPath = fileload.getPathOfFile();
@@ -395,21 +416,20 @@ public class EPPController extends Thread {
 
 
 
-//"(?:[^\\"](?=[\p{P}]{2,})|\\\\|\\")*"  //for later use (probably lmao)
-
+    //"(?:[^\\"](?=[\p{P}]{2,})|\\\\|\\")*"  //for later use (probably lmao)
 
 
     private static List<String> listOfErrors = new ArrayList<String>();
 
     public void ReadCellData(int vColumn, int vColumn2, String file)
     {
-        String value=null;          //variable for storing the cell value
-        Workbook wb=null;           //initialize Workbook null
+        String value = null;          //variable for storing the cell value
+        Workbook wb = null;           //initialize Workbook null
 
 
         try
         {
-            FileInputStream inputStream=new FileInputStream("C:\\Users\\tholv\\Desktop\\epp\\import-firgang722.xlsx");
+            FileInputStream inputStream=new FileInputStream(file);
 
             wb = new XSSFWorkbook(inputStream);
 

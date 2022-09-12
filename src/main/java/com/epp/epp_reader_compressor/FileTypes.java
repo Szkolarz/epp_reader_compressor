@@ -6,23 +6,6 @@ import java.util.regex.*;
 
 public class FileTypes {
 
-    public void abc(String temp, String firstTwoChars, String typeOfFile, String listOfErrors) {
-
-        Integer total = 0;
-        Integer counterForTabs = 0;
-
-        for (int a = 0; a < temp.length(); a++) {
-            char ch = temp.charAt(a);
-            if ( ch == '\t') {
-                total++; counterForTabs++;
-
-               // if (typeOfFile.equals("BP"))
-                    //fileBP(temp, a, counterForTabs, total, firstTwoChars, listOfErrors);
-
-            }
-        }
-    }
-
 
     public String fileBP (String temp, String firstTwoChars, String listOfErrors) {
         if (firstTwoChars.equals("BP")) {
@@ -92,37 +75,32 @@ public class FileTypes {
         return temp;
     }
 
-    public void fileBPf (String temp, Integer a, Integer counterForTabs, Integer total, String firstTwoChars) {
-        if ((counterForTabs == 9 && firstTwoChars.equals("BP"))) {
-            Pattern p = Pattern.compile("[0-9]{2}-[0-9]{3}");//. represents single character
+    public String fileOther (String temp, String firstTwoChars, String listOfErrors) {
 
-            String firstFiveChars = "";   //substring containing first 4 characters
-            firstFiveChars = (String.valueOf(temp.charAt(a+1)) + String.valueOf(temp.charAt(a+2)) +
-                    String.valueOf(temp.charAt(a+3)) + String.valueOf(temp.charAt(a+4)) +
-                    String.valueOf(temp.charAt(a+5)) + String.valueOf(temp.charAt(a+6)));
+            Pattern p_content = Pattern.compile("(\\t[0-9]{3,})");
+            Matcher m_content = p_content.matcher(temp);
 
-            //(\t[a-zA-Z]{0,3}\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t)
-            //(\t+([0-9]{0,5})\/[a-zA-Z]{0,4}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\-[0-9]{0,4}\/[a-zA-Z]{0,5}\/[0-9]{0,3}\/[0-9]{0,3}(.*?)\t) //wazne
+            boolean b_content = m_content.find();
+
+            String document = (listOfErrors);
+            String contractor = "";
+            String content = "";
+            String amount = "";
 
 
-            Matcher m = p.matcher(firstFiveChars);
-            boolean b = m.matches();
-            if (b == true) {
-                String output = new StringBuilder().append(temp.substring(0, a+1))
-                        .append("---\t").append(temp.substring(a+1, temp.length())).toString();
-                //temp = temp + String.valueOf("---\t" + temp.charAt(a));
-                temp = output;
-            }
+            if (b_content == true)
+                content = ("\t" + m_content.group(1));
+            else
+                content = "";
 
 
+            String output = new StringBuilder().append(document)
+                    .append(contractor)
+                    .append(content).append(amount).toString();
+            temp = output;
 
 
-
-            //System.out.println(b);
-        }
-
+        return temp;
     }
 
     public String fileBW (String temp1, String firstTwoChars, String listOfErrors) {
@@ -313,8 +291,68 @@ public class FileTypes {
 
     }
 
-    public void filePZ (String temp, Integer a, Integer counterForTabs, Integer total, String firstTwoChars) {
+    public String fileFS (String temp, String firstTwoChars, String listOfErrors) {
+            Pattern p_content = Pattern.compile("(\\t[0-9]{3,})");
 
+
+            Matcher m_content = p_content.matcher(temp);;
+            boolean b_content = m_content.find();
+
+            String document = (listOfErrors);
+            String contractor = "";
+            String content = "";
+            String amount = "";
+
+            if (b_content == true) {
+                content = m_content.group(1);
+                if (content == null)
+                    content = "\tbrak danych\t";
+            }
+            else {
+                content = "\tbrak danych\t";
+            }
+
+
+            String output = new StringBuilder().append(document)
+                    .append(contractor).append("\t")
+                    .append(content).append(amount).toString();
+            temp = output;
+
+
+        return temp;
     }
+
+    /*public void Test (String temp, Integer a, Integer counterForTabs, Integer total, String firstTwoChars) {
+        if ((counterForTabs == 9 && firstTwoChars.equals("BP"))) {
+            Pattern p = Pattern.compile("[0-9]{2}-[0-9]{3}");//. represents single character
+
+            String firstFiveChars = "";   //substring containing first 4 characters
+            firstFiveChars = (String.valueOf(temp.charAt(a+1)) + String.valueOf(temp.charAt(a+2)) +
+                    String.valueOf(temp.charAt(a+3)) + String.valueOf(temp.charAt(a+4)) +
+                    String.valueOf(temp.charAt(a+5)) + String.valueOf(temp.charAt(a+6)));
+
+            //(\t[a-zA-Z]{0,3}\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t) //wazne
+            //(\t([a-zA-Z]{0,3})\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t)
+            //(\t+([0-9]{0,5})\/[a-zA-Z]{0,4}\/[0-9]{4}+(.*?)\t) //wazne
+            //(\t([a-zA-Z]{0,3})\-[0-9]{0,4}\/[a-zA-Z]{0,5}\/[0-9]{0,3}\/[0-9]{0,3}(.*?)\t) //wazne
+
+
+            Matcher m = p.matcher(firstFiveChars);
+            boolean b = m.matches();
+            if (b == true) {
+                String output = new StringBuilder().append(temp.substring(0, a+1))
+                        .append("---\t").append(temp.substring(a+1, temp.length())).toString();
+                //temp = temp + String.valueOf("---\t" + temp.charAt(a));
+                temp = output;
+            }
+
+
+
+
+
+            //System.out.println(b);
+        }
+
+    }*/
 
 }
