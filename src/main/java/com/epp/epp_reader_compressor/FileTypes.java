@@ -8,23 +8,28 @@ public class FileTypes {
 
     public String fileBP (String temp, String firstTwoChars, String listOfErrors) {
         if (firstTwoChars.equals("BP")) {
-            Pattern p_content = Pattern.compile("((\\t.([a-zA-Z]{0,3})\\s[0-9]{0,6}\\/[a-zA-Z0-9]{0,3}\\/[0-9]{0,5}(.*?)\\t))|((\\t(Liczba).*[.][0-9]{2}\\t))"); //. represents single character
+
+            Pattern p_vat = Pattern.compile("(\\t(\\/VAT)(.*?)\\t)");
+            Matcher m_vat = p_vat.matcher(temp);
+            boolean b_vat = m_vat.find();
+
+            if (b_vat == true) {
+                String tmp = "";
+                tmp = m_vat.group(1);
+                tmp = tmp.substring(0, tmp.length() - 1);
+                tmp = (tmp + ",");
+                temp = (temp.replaceAll("(\\t(\\/VAT)(.*?)\\t)", tmp));
+                System.out.println(temp);
+            }
+
+            Pattern p_content = Pattern.compile("((\\t.([a-zA-Z]{0,3})\\s[0-9]{0,6}\\/[a-zA-Z0-9]{0,3}\\/[0-9]{0,5}(.*?)\\t))|((\\t(Liczba).*[.][0-9]{2}\\t))|(\\t(\\/VAT)(.*?)\\t)"); //. represents single character
             Pattern p_amount = Pattern.compile("[0-9]{0,7}\\.[0-9]{4}");
-
-
-            //(\t[a-zA-Z]{0,3}\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t)
-            //(\t+([0-9]{0,5})\/[a-zA-Z]{0,4}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\-[0-9]{0,4}\/[a-zA-Z]{0,5}\/[0-9]{0,3}\/[0-9]{0,3}(.*?)\t) //wazne
-
-            //
 
             Matcher m_content = p_content.matcher(temp);
             Matcher m_amount = p_amount.matcher(temp);
             boolean b_content = m_content.find();
             boolean b_amount = m_amount.find();
 
-            // System.out.println("found: " + m.group(0));
 
             String document = ("BP " + listOfErrors);
             String contractor = "";
@@ -32,7 +37,6 @@ public class FileTypes {
             String amount = "";
 
 
-            Integer total = 0;
             Integer counterForTabs = 0;
 
             StringBuilder ooo = new StringBuilder();
@@ -53,8 +57,11 @@ public class FileTypes {
 
             if (b_content == true) {
                 content = m_content.group(1);
-                if (content == null)
+                if (content == null) {
                     content = m_content.group(5);
+                    if (content == null)
+                        content = m_content.group(8);
+                }
             }
             else
                 content = "\tbrak danych\t";

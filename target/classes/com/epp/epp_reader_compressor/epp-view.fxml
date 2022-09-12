@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="480.0" style="-fx-background-color: #333333;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.epp.epp_reader_compressor.EPPController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="480.0" style="-fx-background-color: #333333;" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.epp.epp_reader_compressor.EPPController">
    <children>
       <Line endX="31.5" endY="213.99996948242188" layoutX="10.0" layoutY="144.0" startX="31.5" startY="-98.75534057617188" stroke="#292929" strokeWidth="2.0" AnchorPane.rightAnchor="1.0">
          <effect>
@@ -35,7 +35,7 @@
             </DropShadow>
          </effect>
       </Button>
-      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="270.0" onAction="#onSaveButtonClick1" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242; -fx-background-radius: 54; -fx-border-width: 45; -fx-border-radius: 54; -fx-region-border: 23;" text="Ładuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
+      <Button fx:id="buttonLoad" layoutX="171.0" layoutY="270.0" onAction="#onSaveButtonClick1" prefHeight="30.0" prefWidth="138.0" style="-fx-background-color: #52804d; -fx-border-color: #424242;" text="Konwertuj" textFill="WHITE" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="171.0">
          <font>
             <Font size="18.0" />
          </font>
