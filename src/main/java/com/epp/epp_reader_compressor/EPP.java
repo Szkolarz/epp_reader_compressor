@@ -90,8 +90,6 @@ public class EPP extends Application {
 
                 borderPane.setTop(toolBar);
 
-
-
                 borderPane.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -108,18 +106,12 @@ public class EPP extends Application {
                     }
                 });
 
-
                 stage.setTitle("Konwerter plików EPP");
                 stage.setScene(scene);
                 stage.show();
                 stage.setResizable(false);
-
             }
         });
-
-
-
-
     }
 
     public static void main(String[] args) {

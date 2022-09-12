@@ -1,9 +1,7 @@
 package com.epp.epp_reader_compressor;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -12,11 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileLoad {
-
-    @FXML
-    private Label labelEPP;
-    @FXML
-    private Label labelXLSX;
 
     private static String nameOfFile;
     private static String pathOfFile;
@@ -27,7 +20,6 @@ public class FileLoad {
     public String getPathOfFile() {
         return pathOfFile;
     }
-
 
 
     private static void configureFileChooser(final FileChooser fileChooser, String extension) {
@@ -50,11 +42,9 @@ public class FileLoad {
         File file = fileChooser.showOpenDialog(stage.getScene().getWindow());
 
         if (file != null) {
-            //System.out.println((file.getPath()));
             nameOfFile = file.getPath();
             pathOfFile = file.getPath();
             System.out.println(nameOfFile);
-            //nameOfFile = nameOfFile.replaceAll(".+(\\.+)$", "a");
 
             Pattern p = Pattern.compile("(?:[^\\\\/](?!(\\\\|/)))+$");
             Matcher m = p.matcher(nameOfFile);
@@ -69,6 +59,4 @@ public class FileLoad {
             nameOfFile = "(nie wybrano)";
         }
     }
-
-
 }

@@ -15,28 +15,16 @@ import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EPPController extends Thread {
 
-
-    public static Integer i;
-    public static Integer size;
-    public static BufferedWriter bw;
-
-    public EPPController() {
-
-    }
-
+    public EPPController() {}
 
 
     @FXML
@@ -62,8 +50,6 @@ public class EPPController extends Thread {
     private ImageView imageLoading;
 
     @FXML
-    private Rectangle clickMinimized1;
-    @FXML
     private Label clickMinimized;
     @FXML
     private Label labelLoading;
@@ -87,7 +73,6 @@ public class EPPController extends Thread {
     }
 
 
-
     @FXML
     protected void onMouseExit() throws IOException {
         Platform.exit();
@@ -95,14 +80,11 @@ public class EPPController extends Thread {
     }
 
 
-
     @FXML
     protected void onMouseMinimized() throws IOException {
         Stage stage = (Stage) clickMinimized.getScene().getWindow();
         stage.setIconified(true);
     }
-
-    //Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
     AtomicInteger atomicInteger = new AtomicInteger(0);
 
@@ -112,10 +94,6 @@ public class EPPController extends Thread {
             for (int i = i_; i < size_; i++) {
                 atomicInteger.incrementAndGet();
                 for (int j = 0; j < listOfErrors.size(); j++) {
-
-                    //System.out.println("I: "+i);
-                    //System.out.println("J: "+j +"\n");
-                    // System.out.println(list.get(i));
 
                     if ((list.get(i).contains(listOfErrors.get(j))) && ((listOfErrors.get(j)).substring(0, 2).equals(list.get(i).substring(1, 3)))
                             || list.get(i).contains(listOfErrors.get(j)) && ((list.get(i)).startsWith("\"wpłata\""))
@@ -131,9 +109,6 @@ public class EPPController extends Thread {
                         temp = (temp.replaceAll("\\s[.]\\s*\\.*", "\t"));   //kropki
                         temp = (temp.replaceAll("(\\t)\\1{1,}", "\t"));
                         temp = (temp.replaceAll("(\\t\\s)\\1{1,}", ""));
-                        //System.out.println(temp.replaceAll("[ ]*,[ ]*|[ ]+", "\t"));
-//   (\s[.](.*?)\t)
-                        //(\s[.]*)([\s]*\.)
 
                         String firstTwoChars = "";   //substring containing first 4 characters
 
@@ -157,17 +132,16 @@ public class EPPController extends Thread {
                             temp = fileTypes.fileOther(temp, firstTwoChars, listOfErrors.get(j));
                         }
 
+
                         try {
                             bw.write(temp);
                             bw.newLine();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                         break;
                     }
                 }
-
             }
             try {
                 Thread.sleep(15);
@@ -182,7 +156,6 @@ public class EPPController extends Thread {
                     labelLoading.setVisible(false);
                     imageLoading.setVisible(false);
 
-
                     checkRequirements();
                     System.out.println("finito");
 
@@ -195,21 +168,13 @@ public class EPPController extends Thread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
-
             }
         });
 
         thread.start();
-
-      /*  try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-
     }
+
+
 
     public void programComplete() throws IOException, InterruptedException {
 
@@ -232,16 +197,11 @@ public class EPPController extends Thread {
 
                 }});
         }  catch (Exception e) {
-
+            System.out.println("Błąd alertu");
         }start();
-
-
-
     }
 
 
-    @FXML
-    private Button on1;
 
     private void saveTextFile(String content, File file) {
         try {
@@ -256,12 +216,9 @@ public class EPPController extends Thread {
 
 
 
-
     public void onSaveButtonClick() throws IOException, InterruptedException {
 
         final String columns = "Dokument\tKontrahent\tTreść dokumentu\tKwota";
-
-        //fileChooser.showOpenDialog(new Stage());
 
         labelLoading.setVisible(true);
         imageLoading.setVisible(true);
@@ -272,12 +229,11 @@ public class EPPController extends Thread {
         fileChooser.setInitialDirectory(new File(currentPath));
 
         //Set extension filter for text files
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Pliki TXT (*.txt)", "*.txt");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Pliki .txt (*.txt)", "*.txt");
         fileChooser.getInitialDirectory();
         fileChooser.getExtensionFilters().add(extFilter);
 
         File file1 = fileChooser.showSaveDialog(stage);
-
 
         if (file1 != null) {
             savedFilePath = file1.getPath();
@@ -292,7 +248,6 @@ public class EPPController extends Thread {
             labelLoading.setVisible(false);
             imageLoading.setVisible(false);
         }
-
 
         welcomeText.setText("EPP Converter");
 
@@ -344,26 +299,8 @@ public class EPPController extends Thread {
     public void onSaveButtonClick1() throws IOException, InterruptedException {
         sleep(10);
         onSaveButtonClick();
-
     }
 
-
-    protected void onSaveButtonClick(Integer i) throws IOException  {
-
-
-       /* Path source = Paths.get("C:\\Users\\tholv\\Desktop\\epp\\test.txt");
-        try{
-            // rename a file in the same directory
-            Files.move(source, source.resolveSibling("text.xlsx"));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-
-
-
-    }
 
 
     private void checkRequirements() {
@@ -386,8 +323,6 @@ public class EPPController extends Thread {
             imgTickXlsx.setVisible(true);
         else
             imgTickXlsx.setVisible(false);
-
-
     }
 
 
@@ -415,17 +350,12 @@ public class EPPController extends Thread {
     }
 
 
-
-    //"(?:[^\\"](?=[\p{P}]{2,})|\\\\|\\")*"  //for later use (probably lmao)
-
-
     private static List<String> listOfErrors = new ArrayList<String>();
 
     public void ReadCellData(int vColumn, int vColumn2, String file)
     {
         String value = null;          //variable for storing the cell value
         Workbook wb = null;           //initialize Workbook null
-
 
         try
         {
@@ -448,17 +378,9 @@ public class EPPController extends Thread {
                         value = cell.getStringCellValue();
                         listOfErrors.add(value);
                     }
-
                 }
             }
-
             inputStream.close();
-
-
-           /* for (int i=0; i<listOfErrors.size(); i++) {
-                System.out.println(listOfErrors.get(i));
-            }*/
-
         }
         catch(FileNotFoundException e)
         {
@@ -471,9 +393,4 @@ public class EPPController extends Thread {
 
 
     }
-
-
-
 }
-
-

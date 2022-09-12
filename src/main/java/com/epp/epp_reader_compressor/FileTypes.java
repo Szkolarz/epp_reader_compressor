@@ -1,6 +1,5 @@
 package com.epp.epp_reader_compressor;
 
-import java.util.List;
 import java.util.regex.*;
 
 
@@ -294,7 +293,6 @@ public class FileTypes {
     public String fileFS (String temp, String firstTwoChars, String listOfErrors) {
             Pattern p_content = Pattern.compile("(\\t[0-9]{3,})");
 
-
             Matcher m_content = p_content.matcher(temp);;
             boolean b_content = m_content.find();
 
@@ -321,38 +319,5 @@ public class FileTypes {
 
         return temp;
     }
-
-    /*public void Test (String temp, Integer a, Integer counterForTabs, Integer total, String firstTwoChars) {
-        if ((counterForTabs == 9 && firstTwoChars.equals("BP"))) {
-            Pattern p = Pattern.compile("[0-9]{2}-[0-9]{3}");//. represents single character
-
-            String firstFiveChars = "";   //substring containing first 4 characters
-            firstFiveChars = (String.valueOf(temp.charAt(a+1)) + String.valueOf(temp.charAt(a+2)) +
-                    String.valueOf(temp.charAt(a+3)) + String.valueOf(temp.charAt(a+4)) +
-                    String.valueOf(temp.charAt(a+5)) + String.valueOf(temp.charAt(a+6)));
-
-            //(\t[a-zA-Z]{0,3}\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\s[0-9]{0,6}\/[a-zA-Z]{0,3}\/[0-9]{4}+(.*?)\t)
-            //(\t+([0-9]{0,5})\/[a-zA-Z]{0,4}\/[0-9]{4}+(.*?)\t) //wazne
-            //(\t([a-zA-Z]{0,3})\-[0-9]{0,4}\/[a-zA-Z]{0,5}\/[0-9]{0,3}\/[0-9]{0,3}(.*?)\t) //wazne
-
-
-            Matcher m = p.matcher(firstFiveChars);
-            boolean b = m.matches();
-            if (b == true) {
-                String output = new StringBuilder().append(temp.substring(0, a+1))
-                        .append("---\t").append(temp.substring(a+1, temp.length())).toString();
-                //temp = temp + String.valueOf("---\t" + temp.charAt(a));
-                temp = output;
-            }
-
-
-
-
-
-            //System.out.println(b);
-        }
-
-    }*/
 
 }
