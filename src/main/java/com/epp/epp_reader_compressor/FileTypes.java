@@ -225,6 +225,7 @@ public class FileTypes {
             Pattern p_content = Pattern.compile("(\\t[a-zA-Z]{0,3}\\s[0-9]{0,6}\\/[a-zA-Z]{0,3}\\/[0-9]{4}+(.*?)\\t)|(\\t(Zwrot ).*)"); //. represents single character
             Pattern p_amount = Pattern.compile("[0-9]{0,7}\\.[0-9]{4}");
 
+           // System.out.println(temp);
 
             Matcher m_content = p_content.matcher(temp);
             Matcher m_amount = p_amount.matcher(temp);

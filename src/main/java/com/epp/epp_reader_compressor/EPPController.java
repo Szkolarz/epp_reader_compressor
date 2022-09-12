@@ -5,6 +5,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,10 +108,10 @@ public class EPPController extends Thread {
 
 
                         String temp = list.get(i);
-                        temp = (temp.replaceAll("(,)\\1{1,}", "\t"));
+                        temp = (temp.replaceAll("(,)\\1{1,}", "\t")); //przecinki
                         temp = (temp.replaceAll("[ ]*,[ ]*+", "\t"));
-                        temp = (temp.replaceAll("[\"]", ""));               //apostrofy
-                        temp = (temp.replaceAll("\\s[.]\\s*\\.*", "\t"));   //kropki
+                        temp = (temp.replaceAll("[\"]", "")); //apostrofy
+                        temp = (temp.replaceAll("\\s[.]\\s*\\.*", "\t")); //kropki
                         temp = (temp.replaceAll("(\\t)\\1{1,}", "\t"));
                         temp = (temp.replaceAll("(\\t\\s)\\1{1,}", ""));
 
@@ -195,6 +200,10 @@ public class EPPController extends Thread {
                     stage.getIcons().add(new Image("file:src/main/resources/images/epp.png"));
                     alert.showAndWait();
 
+                    list.clear();
+                    listOfErrors.clear();
+                    interrupt();
+
                 }});
         }  catch (Exception e) {
             System.out.println("Błąd alertu");
@@ -220,6 +229,7 @@ public class EPPController extends Thread {
 
         final String columns = "Dokument\tKontrahent\tTreść dokumentu\tKwota";
 
+        atomicInteger.set(0);
         labelLoading.setVisible(true);
         imageLoading.setVisible(true);
 
@@ -260,11 +270,17 @@ public class EPPController extends Thread {
 
         String st = "";
 
+        Scanner scanner = new Scanner(newLineRemover);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            list.add(line);
+        }
+        scanner.close();
 
-        while (true) {
+        /*while (true) {
             if (!((st = br.readLine()) != null)) break;
             list.add(st);
-        }
+        }*/
 
 
         FileWriter fw = null;
@@ -326,6 +342,7 @@ public class EPPController extends Thread {
     }
 
 
+    private String newLineRemover;
     @FXML
     protected void onEppButtonClick(ActionEvent event) throws IOException {
         //Runtime.getRuntime().exec("explorer /select, C:\\");
@@ -334,6 +351,10 @@ public class EPPController extends Thread {
         labelEPP.setText(fileload.getNameOfFile());
         checkRequirements();
         eppPath = fileload.getPathOfFile();
+
+        Path path = Path.of(eppPath);
+        newLineRemover = (Files.readString(path, Charset.forName("ISO-8859-2")));
+        newLineRemover = (newLineRemover.toString().replaceAll("([\\r\\n]{3,})", ""));
     }
 
     public void setLoadingButtonColor(String bgC) {
