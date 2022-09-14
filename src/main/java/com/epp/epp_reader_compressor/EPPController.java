@@ -227,7 +227,7 @@ public class EPPController extends Thread {
 
     public void onSaveButtonClick() throws IOException, InterruptedException {
 
-        final String columns = "Dokument\tKontrahent\tTreść dokumentu\tKwota";
+        final String columns = "Dokument\tKontrahent\tTreść dokumentu\tKwota\tData";
 
         atomicInteger.set(0);
         labelLoading.setVisible(true);

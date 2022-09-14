@@ -5,6 +5,35 @@ import java.util.regex.*;
 
 public class FileTypes {
 
+    public String date (String temp) {
+        Pattern p_date = Pattern.compile("(\\t2[0-9]{13}\\t)");
+        Matcher m_date = p_date.matcher(temp);
+        boolean b_date = m_date.find();
+
+        String date = "";
+        StringBuilder tmpDate = new StringBuilder();
+
+        if (b_date == true) {
+
+            date = m_date.group(1);
+            date = date.substring(0, date.length() - 7);
+            date = date.substring(1);
+
+            Integer counter = 0;
+
+            for (int a = 0; a < date.length(); a++) {
+                counter++;
+                tmpDate = tmpDate.append(String.valueOf(date.charAt(a)));
+                if (counter == 4 || counter == 6)
+                    tmpDate = tmpDate.append(String.valueOf("."));
+                }
+        }
+        else
+            tmpDate = tmpDate.append(String.valueOf(""));
+
+        return tmpDate.toString();
+    }
+
 
     public String fileBP (String temp, String firstTwoChars, String listOfErrors) {
         if (firstTwoChars.equals("BP")) {
@@ -12,6 +41,7 @@ public class FileTypes {
             Pattern p_vat = Pattern.compile("(\\t(\\/VAT)(.*?)\\t)");
             Matcher m_vat = p_vat.matcher(temp);
             boolean b_vat = m_vat.find();
+            String date = date(temp);
 
             if (b_vat == true) {
                 String tmp = "";
@@ -68,13 +98,15 @@ public class FileTypes {
 
             if (b_amount == true) {
                 amount = m_amount.group(0);
+                amount = amount.substring(0, amount.length() - 2);
             }
             else
                 amount = "brak danych";
 
             String output = new StringBuilder().append(document)
                     .append(contractor)
-                    .append(content).append(amount).toString();
+                    .append(content).append(amount)
+                    .append("\t").append(date).toString();
             temp = output;
 
         }
@@ -85,8 +117,8 @@ public class FileTypes {
 
             Pattern p_content = Pattern.compile("(\\t[0-9]{3,})");
             Matcher m_content = p_content.matcher(temp);
-
             boolean b_content = m_content.find();
+            String date = date(temp);
 
             String document = (listOfErrors);
             String contractor = "";
@@ -102,7 +134,8 @@ public class FileTypes {
 
             String output = new StringBuilder().append(document)
                     .append(contractor)
-                    .append(content).append(amount).toString();
+                    .append(content).append(amount)
+                    .append("\t").append(date).toString();
             temp = output;
 
 
@@ -116,13 +149,13 @@ public class FileTypes {
         if (firstTwoChars.equals("BW")) {
             Pattern p_content = Pattern.compile("((\\t.([a-zA-Z]{0,3})\\s[0-9]{0,6}\\/[a-zA-Z0-9]{0,3}\\/[0-9]{0,5}(.*?)\\t))|((\\t(Liczba).*[.][0-9]{2}\\t))"); //. represents single character
             Pattern p_amount = Pattern.compile("[0-9]{0,7}\\.[0-9]{4}");
-
             Pattern p_number = Pattern.compile("\\t[0-9]+\\t");//. represents single character
 
             Matcher m_content = p_content.matcher(temp);
             Matcher m_amount = p_amount.matcher(temp);
             boolean b_content = m_content.find();
             boolean b_amount = m_amount.find();
+            String date = date(temp);
 
             // System.out.println("found: " + m.group(0));
 
@@ -142,6 +175,7 @@ public class FileTypes {
 
             if (b_amount == true) {
                 amount = m_amount.group(0);
+                amount = amount.substring(0, amount.length() - 2);
             }
             else
                 amount = "brak danych";
@@ -215,7 +249,8 @@ public class FileTypes {
             String output = new StringBuilder().append(document)
                     .append(contractor)
                     .append(content)
-                    .append("\t").append(amount).toString();
+                    .append("\t").append(amount)
+                    .append("\t").append(date).toString();
             temp = output;
 
         }
@@ -238,6 +273,7 @@ public class FileTypes {
             Matcher m_amount = p_amount.matcher(temp);
             boolean b_content = m_content.find();
             boolean b_amount = m_amount.find();
+            String date = date(temp);
 
             // System.out.println("found: " + m.group(0));
 
@@ -246,6 +282,8 @@ public class FileTypes {
             String contractor = "";
             String content = "";
             String amount = "";
+
+            date(temp);
 
             boolean flag = true;
             Integer total = 0;
@@ -284,13 +322,15 @@ public class FileTypes {
 
             if (b_amount == true) {
                 amount = m_amount.group(0);
+                amount = amount.substring(0, amount.length() - 2);
             } else
                 amount = "brak danych";
 
             if (flag == true) {
                 String output = new StringBuilder().append(document)
                         .append(contractor)
-                        .append(content).append(amount).toString();
+                        .append(content).append(amount)
+                        .append("\t").append(date).toString();
                 temp = output;
             }
         }
@@ -303,6 +343,7 @@ public class FileTypes {
 
             Matcher m_content = p_content.matcher(temp);;
             boolean b_content = m_content.find();
+        String date = date(temp);
 
             String document = (listOfErrors);
             String contractor = "";
@@ -321,7 +362,8 @@ public class FileTypes {
 
             String output = new StringBuilder().append(document)
                     .append(contractor).append("\t")
-                    .append(content).append(amount).toString();
+                    .append(content).append(amount)
+                    .append("\t").append(date).toString();
             temp = output;
 
 
